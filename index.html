@@ -192,6 +192,7 @@
         <li><a href="#" class="hover:text-indigo-600">Home</a></li>
         <li><a href="#aboutus" class="hover:text-indigo-600">About Us</a></li>
         <li><a href="#contactus" class="hover:text-indigo-600">Contact Us</a></li>
+        <li><button id="loginBtn">Login</button></li>
         <li><a href="#economicsnews" class="hover:text-indigo-600">Economics and News</a></li>
         <li><a href="#Dashboard" class="hover:text-indigo-600 scroll-mt-20">Dashboard</a></li>
         <li><a href="#Forms" class="hover:text-indigo-600">Forms</a></li>
@@ -232,8 +233,12 @@
       </nav>
 
       <div class="max-w-4xl mt-12 md:mt-0">
-        <p class="text-xs uppercase font-semibold tracking-wide text-gray-300 mb-3 select-none">Built to inspire</p>
-        <h1 class="text-white text-5xl sm:text-6xl font-extrabold leading-tight max-w-3xl drop-shadow-lg">Build software people love</h1>
+        <div class="mb-2">
+          <span id="loggedUsername" class="block mt-3 text-xl uppercase font-semibold tracking-wide text-gray-300 hidden"></span>
+  <h1 class="text-white text-5xl sm:text-6xl font-extrabold leading-tight max-w-3xl drop-shadow-lg">
+    Let's Build software, people love
+  </h1>
+</div>
         <p class="text-gray-300 max-w-xl mt-4 leading-relaxed text-lg drop-shadow-sm">
           Bring your digital ideas to life with robust solutions that put innovation, performance, and user experience front and center. Simple, scalable, and built for creators like you.
         </p>
@@ -815,6 +820,114 @@ We’d love to hear from you. Reach out to us for any questions, support, or fee
     </div>
   </section>
   </div>
+  <!-- Login Modal -->
+<div id="loginModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+  <div class="bg-slate-100 rounded-lg max-w-xs w-full p-6 shadow-lg relative">
+    
+    <button id="closeLoginModal" class="absolute top-4 right-4 text-gray-600 hover:text-red-600 focus:outline-none">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+     <a href="#" class="flex items-center space-x-1 text-black font-semibold text-lg tracking-wide">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" aria-label="Logo icon">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10l9-7 9 7v8a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2a2 2 0 00-2-2H5a2 2 0 00-2 2v2a2 2 0 01-2 2H3a2 2 0 01-2-2v-8z" />
+      </svg>
+      <span>Elevate</span>
+    </a>
+    <h3 class="font-bold text-lg mb-4 text-center">Login</h3>
+    <form id="loginForm" class="space-y-3">
+      <input type="text" id="loginUsername" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black" placeholder="Username">
+      <input type="email" id="loginEmail" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black" placeholder="Email">
+      <button type="submit" class="bg-black bg-opacity-20 backdrop-blur-md border border-white border-opacity-30 py-2 px-8 rounded-full text-sm tracking-widest font-semibold text-gray-800 hover:bg-opacity-40 hover:text-white transition-all mt-3 mx-auto block"
+  >Login</button>
+    </form>
+    <p id="loginError" class="text-red-600 text-sm mt-2 hidden">Invalid credentials. Try again.</p>
+  </div>
+</div>
+<script>
+  // --- Login Modal Logic ---
+  const loginBtn = document.getElementById('loginBtn');
+const loginModal = document.getElementById('loginModal');
+const closeLoginModal = document.getElementById('closeLoginModal');
+const loginForm = document.getElementById('loginForm');
+const loginError = document.getElementById('loginError');
+const loggedUsernameSpan = document.getElementById('loggedUsername');
+let isLoggedIn = false;
+let loggedInUsername = '';
+
+function updateLoginButton() {
+  if (isLoggedIn) {
+    loginBtn.textContent = "Logout";
+    loginBtn.classList.add("text-red-500");
+    // Show username
+    if (loggedUsernameSpan) {
+      loggedUsernameSpan.textContent = `Hi!! ${loggedInUsername}`;
+      loggedUsernameSpan.classList.remove('hidden');
+    }
+  } else {
+    loginBtn.textContent = "Login";
+    loginBtn.classList.remove("text-red-500");
+    // Hide username
+    if (loggedUsernameSpan) {
+      loggedUsernameSpan.textContent = "";
+      loggedUsernameSpan.classList.add('hidden');
+    }
+  }
+}
+
+// Open modal on Login
+loginBtn.addEventListener('click', function (e) {
+  if (isLoggedIn) {
+    // Logout
+    isLoggedIn = false;
+    loggedInUsername = '';
+    updateLoginButton();
+    // Optional: show a message or toast
+    return;
+  }
+  loginModal.classList.remove('hidden');
+  loginError.classList.add('hidden');
+});
+
+// Close modal
+closeLoginModal.addEventListener('click', () => {
+  loginModal.classList.add('hidden');
+  loginError.classList.add('hidden');
+});
+
+// Close modal when clicking outside modal content
+loginModal.addEventListener('click', function (e) {
+  if (e.target === loginModal) {
+    loginModal.classList.add('hidden');
+    loginError.classList.add('hidden');
+  }
+});
+
+// Handle Login Form Submit
+loginForm.addEventListener('submit', function (e) {
+  e.preventDefault();
+  // Very basic check - in real world use API
+  const username = document.getElementById('loginUsername').value.trim();
+  const email = document.getElementById('loginEmail').value.trim();
+  if (username && email) {
+    // Assume success
+    isLoggedIn = true;
+    loggedInUsername = username;
+    updateLoginButton();
+    loginModal.classList.add('hidden');
+    loginForm.reset();
+  } else {
+    // Show error (demo)
+    loginError.classList.remove('hidden');
+  }
+});
+
+// On page load, set initial state
+updateLoginButton();
+
+</script>
+
   <script>
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
